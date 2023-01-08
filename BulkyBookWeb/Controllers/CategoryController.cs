@@ -1,5 +1,5 @@
-﻿using System.Net.Mime;
-using BookWebApp.Data;
+﻿using BookWebApp.Data;
+using BookWebApp.Helpers;
 using BookWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,10 +17,11 @@ namespace BookWebApp.Controllers
 
 
 
-        public IActionResult Index()
+        public IActionResult Index(int? pageNumber)
         {
-            IEnumerable<Category> objCategoryList = _db.Categories;
-            return View(objCategoryList);
+            int pageSize = 5;
+            //IEnumerable<Category> objCategoryList = _db.Categories;
+            return View(PagedList<Category>.Create(_db.Categories.ToList(), pageNumber ?? 1, pageSize));
         }
 
         //GET
@@ -33,7 +34,7 @@ namespace BookWebApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category obj)
         {
-            if (obj.Name == obj.DisplayOrder.ToString())
+            if (obj.Name == obj.DisplayOrder.ToString() && obj.Title == obj.DisplayOrder.ToString())
             {
                 ModelState.AddModelError("Name","The DisplayOrder cannot exactly match the key");
             }
